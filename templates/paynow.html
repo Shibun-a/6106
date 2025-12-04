@@ -10,6 +10,10 @@
         <input type="text" id="payee" placeholder="Enter payee address">
         <input type="number" id="amount" placeholder="Enter amount to transfer">
         <button class="btn" onclick="transfer()">Transfer Money</button>
+        <button class="btn" onclick="view_transaction()">View Transaction</button>
+        <p id="view_payer"></p>
+        <p id="view_payee"></p>
+        <p id="view_amount"></p>
         <form action="/main" method="post">
             <input type="submit" value="Main">
         </form>
@@ -72,11 +76,21 @@
                 const payer = document.getElementById('payer').value;
                 const payee = document.getElementById('payee').value;
                 const amount = document.getElementById('amount').value;
+
+                await contract.methods.transfer_money(payer, payee,amount).send({ from: accounts[0]});
                 console.log(payer,payee,amount);
                 console.log(accounts[0]);
             }
 
-            await contract.methods.transfer_money(payer, payee,amount).send({ from: accounts[0]});
+            async function view_transaction() {
+                const result = await contract.methods.check_transaction().call();
+                console.log(result[0], result[1], result[2]);
+
+                document.getElementById('view_payer').innerText = "Payer: " + result[0];
+                document.getElementById('view_payee').innerText = "Payee: " + result[1];
+                document.getElementById('view_amount').innerText = "Amount: " + result[2];
+            }
+
         </script>
     </div>
 </body>
